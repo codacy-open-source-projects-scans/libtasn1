@@ -1,7 +1,7 @@
 GNU Libtasn1 NEWS                                     -*- outline -*-
 
 * Noteworthy changes in release ?.? (????-??-??) [?]
-
+- Update gnulib files and various build/maintenance fixes.
 
 * Noteworthy changes in release 4.19.0 (2022-08-23) [stable]
 - Clarify libtasn1.map license.  Closes: #38.
@@ -533,8 +533,8 @@ GNU Libtasn1 NEWS                                     -*- outline -*-
 - Manage DEFAULT option with OBJECT IDENTIFIER
 
 * Noteworthy changes in release 0.2.3
-- Chenge asn1_find_structure_from_oid prototype
-- Chenge asn1_find_structure_from_oid prototype
+- Change asn1_find_structure_from_oid prototype
+- Change asn1_find_structure_from_oid prototype
 - Add ASN1_MEM_ALLOC_ERROR return value
 
 * Noteworthy changes in release 0.2.2
