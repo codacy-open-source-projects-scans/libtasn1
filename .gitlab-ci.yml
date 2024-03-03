@@ -1,3 +1,24 @@
+# Copyright (C) 2016-2024 Free Software Foundation, Inc.
+#
+# This file is part of LIBTASN1.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+workflow:
+  rules:
+  - if: $CI_COMMIT_BRANCH
+
 variables:
   GIT_SUBMODULE_STRATEGY: normal
   BUILD_IMAGES_PROJECT: gnutls/build-images
@@ -240,6 +261,37 @@ static-analyzers:
     when: on_failure
     paths:
       - scan-build-lib/
+
+# https://www.synopsys.com/blogs/software-security/integrating-coverity-scan-with-gitlab-ci/
+Coverity:
+  rules:
+  - if: $CI_COMMIT_REF_PROTECTED == "true"
+  - when: manual
+  image: debian:12-slim
+  stage: build
+  allow_failure: true
+  before_script:
+  - apt-get update -qq | tail
+  - apt-get install -y -qq make git autoconf automake libtool bison gtk-doc-tools curl | tail
+  script:
+  - test -n "$COVERITY_SCAN_TOKEN" && test -n "$COVERITY_SCAN_PROJECT_NAME"
+  - curl -o /tmp/cov-analysis-linux64.tgz https://scan.coverity.com/download/linux64
+    --form project=$COVERITY_SCAN_PROJECT_NAME --form token=$COVERITY_SCAN_TOKEN
+  - sha1sum /tmp/cov-analysis-linux64.tgz
+  - tar xfz /tmp/cov-analysis-linux64.tgz
+  - time ./bootstrap --skip-po
+  - time ./configure --enable-gcc-warnings --disable-doc CFLAGS="-g -Og"
+  - cov-analysis-linux64-*/bin/cov-build --dir cov-int make check -j$(nproc)
+  - cov-analysis-linux64-*/bin/cov-build version || true
+  - tar cfz cov-int.tar.gz cov-int
+  - curl https://scan.coverity.com/builds?project=$COVERITY_SCAN_PROJECT_NAME
+    --form token=$COVERITY_SCAN_TOKEN --form email=$GITLAB_USER_EMAIL
+    --form file=@cov-int.tar.gz --form version="`git describe --tags`"
+    --form description="`git describe --tags` / $CI_COMMIT_TITLE / $CI_COMMIT_REF_NAME:$CI_PIPELINE_ID"
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - cov-int/*.txt
 
 armcross:
   extends: .test
