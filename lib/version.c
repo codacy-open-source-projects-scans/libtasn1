@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2000-2024 Free Software Foundation, Inc.
+ * Copyright (C) 2000-2025 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -18,9 +18,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 
 #include <string.h>		/* for strverscmp */
 

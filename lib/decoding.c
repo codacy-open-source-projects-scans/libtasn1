@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2024 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2025 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -18,19 +18,20 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
 
 /*****************************************************/
 /* File: decoding.c                                  */
 /* Description: Functions to manage DER decoding     */
 /*****************************************************/
 
-#include <int.h>
-#include <parser_aux.h>
-#include <gstr.h>
-#include <structure.h>
-#include <element.h>
+#include "int.h"
+#include "parser_aux.h"
+#include "gstr.h"
+#include "structure.h"
+#include "element.h"
 #include <limits.h>
-#include <intprops.h>
+#include "intprops.h"
 #include "c-ctype.h"
 
 #ifdef DEBUG
@@ -1569,7 +1570,14 @@ asn1_der_decoding2 (asn1_node *element, const void *ider, int *max_ider_len,
 	    move = UP;
 	}
       if (move == UP)
-	p = _asn1_find_up (p);
+	{
+	  /* If we are parsing a sequence or set and p is a direct
+	     child of it, no need to traverse the list back to the leftmost node. */
+	  if (tcache.tail == p)
+	    p = tcache.head;
+	  else
+	    p = _asn1_find_up (p);
+	}
     }
 
   _asn1_delete_not_used (*element);

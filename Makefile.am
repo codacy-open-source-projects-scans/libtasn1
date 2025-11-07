@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002-2024 Free Software Foundation, Inc.
+# Copyright (C) 2002-2025 Free Software Foundation, Inc.
 #
 # This file is part of LIBTASN1.
 #
@@ -36,10 +36,6 @@ SUBDIRS += doc examples
 endif
 
 SUBDIRS += fuzz tests
-
-include $(top_srcdir)/aminclude_static.am
-
-ACLOCAL_AMFLAGS = -I m4 -I src/gl/m4
 
 ABIDW_COMMON = --no-show-locs --no-corpus-path
 ABIGNORE_FILE = "$(top_srcdir)/devel/libtasn1.abignore"
@@ -89,12 +85,6 @@ abi-check: lib/libtasn1.la
 
 files-update: abi-dump-latest
 
-local-code-coverage-output: code-coverage-capture
-	cat "GNU Libtasn1-$(VERSION)-coverage/index.html"|grep headerCovTableEntry|grep '%'|head -1|sed 's/^.*>\([0-9]\+\.[0-9]\+\s*%\)<.*$$/ coverage lines: \1/' || true
-
-clean-local: code-coverage-clean
-distclean-local: code-coverage-dist-clean
-
 # git-version-gen
 EXTRA_DIST += $(top_srcdir)/.version
 BUILT_SOURCES = $(top_srcdir)/.version
@@ -113,8 +103,8 @@ srcdist:
 	$(AM_V_GEN)if test -e $(srcdir)/.git \
 			&& command -v git > /dev/null; then \
 	 cd $(srcdir) && \
-	   git archive --prefix=$(PACKAGE)-$$(git describe)/ \
-	       -o $(abs_builddir)/$(PACKAGE)-$$(git describe)-src.tar.gz HEAD; \
+	   git archive --prefix=$(PACKAGE)-v$(VERSION)/ \
+	       -o $(abs_builddir)/$(PACKAGE)-v$(VERSION)-src.tar.gz HEAD; \
 	fi
 
 dist-hook: mtime-NEWS-to-git-HEAD
@@ -122,16 +112,25 @@ dist-hook: mtime-NEWS-to-git-HEAD
 mtime-NEWS-to-git-HEAD:
 	$(AM_V_GEN)if test -e $(srcdir)/.git \
 			&& command -v git > /dev/null; then \
-		touch -m -d @"$$(git log -1 --format=%ct)" $(srcdir)/NEWS; \
+		touch -m -t "$$(git log -1 --format=%cd --date=format-local:%Y%m%d%H%M.%S)" $(srcdir)/NEWS; \
 	fi
+
+dist-hook: texi-stamps-to-mtime-NEWS
+.PHONY: texi-stamps-to-mtime-NEWS
+texi-stamps-to-mtime-NEWS: mtime-NEWS-to-git-HEAD
+	$(AM_V_GEN)touch -m -r $(srcdir)/NEWS $(srcdir)/doc/$(PACKAGE).texi
 
 .PHONY: gen-ChangeLog
 gen-ChangeLog:
-	$(AM_V_GEN)if test -d .git; then				\
-		$(top_srcdir)/build-aux/gitlog-to-changelog >		\
-			$(distdir)/cl-t &&				\
-		{ rm -f $(distdir)/ChangeLog &&				\
-		  mv $(distdir)/cl-t $(distdir)/ChangeLog; }		\
+	$(AM_V_GEN)if test -e $(srcdir)/.git; then			\
+	  LC_ALL=en_US.UTF-8 TZ=UTC0					\
+	    $(top_srcdir)/build-aux/gitlog-to-changelog			\
+	      --srcdir=$(srcdir) --					\
+	      v$(PREV_VERSION)~.. > $(distdir)/cl-t &&			\
+	    { printf '\n\nSee the source repo for older entries\n'	\
+	      >> $(distdir)/cl-t &&					\
+	      rm -f $(distdir)/ChangeLog &&				\
+	      mv $(distdir)/cl-t $(distdir)/ChangeLog; }		\
 	fi
 
 .PHONY: abi-check abi-dump-versioned abi-dump-latest

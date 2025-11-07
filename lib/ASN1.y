@@ -1,6 +1,6 @@
 %{
 /*
- * Copyright (C) 2001-2024 Free Software Foundation, Inc.
+ * Copyright (C) 2001-2025 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -19,6 +19,8 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
+
 /*****************************************************/
 /* File: x509_ASN.y                                  */
 /* Description: input file for 'bison' program.      */
@@ -26,9 +28,9 @@
 /*   ASN.1 syntax                                    */
 /*****************************************************/
 
-#include <int.h>
-#include <parser_aux.h>
-#include <structure.h>
+#include "int.h"
+#include "parser_aux.h"
+#include "structure.h"
 #include <libtasn1.h>
 #include "c-ctype.h"
 
@@ -62,7 +64,7 @@ static int _asn1_yylex(void);
     { \
       fprintf(stderr, "%s:%u: Oversize value\n", \
                file_name, line_number); \
-      exit(1); \
+      exit(EXIT_FAILURE);		\
     } \
 }
 #endif

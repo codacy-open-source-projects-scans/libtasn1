@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002-2024 Free Software Foundation, Inc.
+# Copyright (C) 2002-2025 Free Software Foundation, Inc.
 #
 # This file is part of LIBTASN1.
 #
@@ -18,9 +18,9 @@
 
 SUBDIRS = gl
 
-AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(CFLAG_VISIBILITY) $(CODE_COVERAGE_CFLAGS)
+AM_CFLAGS = $(WARN_CFLAGS) $(WERROR_CFLAGS) $(CFLAG_VISIBILITY)
 AM_CPPFLAGS = -I$(builddir)/gl -I$(srcdir)/gl -I$(builddir)/includes -I$(srcdir)/includes\
- -DASN1_BUILDING $(CODE_COVERAGE_CPPFLAGS)
+ -DASN1_BUILDING
 AM_YFLAGS = -Wno-yacc
 
 include_HEADERS = includes/libtasn1.h
@@ -52,8 +52,7 @@ libtasn1_la_LIBADD = gl/libgnu.la
 
 libtasn1_la_LDFLAGS = \
 	-no-undefined \
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
-	$(CODE_COVERAGE_LDFLAGS)
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 
 if HAVE_LD_VERSION_SCRIPT
 libtasn1_la_LDFLAGS += -Wl,--version-script=$(srcdir)/libtasn1.map

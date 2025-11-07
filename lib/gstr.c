@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2024 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2025 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -18,7 +18,9 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-#include <int.h>
+#include <config.h>
+
+#include "int.h"
 #include "gstr.h"
 
 /* These function are like strcat, strcpy. They only

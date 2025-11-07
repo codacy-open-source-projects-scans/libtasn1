@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2024 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2025 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -18,6 +18,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include <config.h>
 
 /*****************************************************/
 /* File: coding.c                                    */
@@ -25,14 +26,12 @@
 /*   an ASN1 type.                                   */
 /*****************************************************/
 
-#include <int.h>
+#include "int.h"
 #include "parser_aux.h"
-#include <gstr.h>
+#include "gstr.h"
 #include "element.h"
 #include "minmax.h"
-#include <structure.h>
-
-#define MAX_TAG_LEN 16
+#include "structure.h"
 
 /******************************************************/
 /* Function : _asn1_error_description_value_not_found */
@@ -446,7 +445,7 @@ int
 asn1_object_id_der (const char *str, unsigned char *der, int *der_len,
 		    unsigned flags)
 {
-  unsigned char tag_der[MAX_TAG_LEN];
+  unsigned char tag_der[ASN1_MAX_TAG_SIZE];
   int tag_len = 0, r;
   int max_len = *der_len;
 
@@ -670,7 +669,7 @@ _asn1_insert_tag_der (asn1_node node, unsigned char *der, int *counter,
   unsigned char class, class_implicit =
     0, temp[MAX (SIZEOF_UNSIGNED_INT * 3 + 1, LTOSTR_MAX_SIZE)];
   unsigned long tag_implicit = 0;
-  unsigned char tag_der[MAX_TAG_LEN];
+  unsigned char tag_der[ASN1_MAX_TAG_SIZE];
 
   is_tag_implicit = 0;
 

@@ -15,7 +15,7 @@ This manual is for GNU Libtasn1
 which is a library for Abstract Syntax Notation One (ASN.1) and
 Distinguished Encoding Rules (DER) manipulation.
 
-Copyright @copyright{} 2001--2024 Free Software Foundation, Inc.
+Copyright @copyright{} 2001--2025 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -351,18 +351,18 @@ DEFINITIONS IMPLICIT TAGS ::=
 
 BEGIN
 
-OtherStruct := SEQUENCE {
+OtherStruct ::= SEQUENCE {
      x       INTEGER,
      y       CHOICE {
          y1 INTEGER,
-         y2 OCTET STRING },
+         y2 OCTET STRING }
 }
 
 Dss-Sig-Value ::= SEQUENCE {
      r       INTEGER,
      s       INTEGER,
-     other   OtherStruct
-     z       INTEGER OPTIONAL,
+     other   OtherStruct,
+     z       INTEGER OPTIONAL
 }
 
 END
