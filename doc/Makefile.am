@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-# Copyright (C) 2002-2025 Free Software Foundation, Inc.
+# Copyright (C) 2002-2026 Free Software Foundation, Inc.
 #
 # This file is part of LIBTASN1.
 #
@@ -33,17 +33,20 @@ dist_man_MANS = $(gdoc_MANS) asn1Parser.1 asn1Coding.1 asn1Decoding.1
 HELP2MAN_OPTS = --info-page libtasn1
 
 asn1Coding.1: $(top_srcdir)/src/asn1Coding.c $(top_srcdir)/.version
-	$(AM_V_GEN)$(HELP2MAN) $(HELP2MAN_OPTS) \
+	$(AM_V_GEN)env SOURCE_DATE_EPOCH=$(SOURCETIME_HELP2MAN) \
+		$(HELP2MAN) $(HELP2MAN_OPTS) \
 		--name="ASN.1 DER encoder" \
 		--output=$@ $(top_builddir)/src/asn1Coding$(EXEEXT)
 
 asn1Decoding.1: $(top_srcdir)/src/asn1Decoding.c $(top_srcdir)/.version
-	$(AM_V_GEN)$(HELP2MAN) $(HELP2MAN_OPTS) \
+	$(AM_V_GEN)env SOURCE_DATE_EPOCH=$(SOURCETIME_HELP2MAN) \
+		$(HELP2MAN) $(HELP2MAN_OPTS) \
 		--name="ASN.1 DER decoder" \
 		--output=$@ $(top_builddir)/src/asn1Decoding$(EXEEXT)
 
 asn1Parser.1: $(top_srcdir)/src/asn1Parser.c $(top_srcdir)/.version
-	$(AM_V_GEN)$(HELP2MAN) $(HELP2MAN_OPTS) \
+	$(AM_V_GEN)env SOURCE_DATE_EPOCH=$(SOURCETIME_HELP2MAN) \
+		$(HELP2MAN) $(HELP2MAN_OPTS) \
 		--name="ASN.1 syntax tree generator for libtasn1" \
 		--output=$@ $(top_builddir)/src/asn1Parser$(EXEEXT)
 

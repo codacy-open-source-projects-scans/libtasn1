@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-# Copyright (C) 2002-2025 Free Software Foundation, Inc.
+# Copyright (C) 2002-2026 Free Software Foundation, Inc.
 #
 # This file is part of LIBTASN1.
 #
@@ -25,7 +25,7 @@ AC_INIT([GNU Libtasn1],
 # Interfaces added:                             AGE++
 # Interfaces removed:                           AGE=0
 AC_SUBST(LT_CURRENT, 12)
-AC_SUBST(LT_REVISION, 5)
+AC_SUBST(LT_REVISION, 6)
 AC_SUBST(LT_AGE, 6)
 
 AC_SUBST([MAJOR_VERSION], [`echo $PACKAGE_VERSION|cut -d'.' -f1`])
@@ -111,6 +111,23 @@ AC_SEARCH_LIBS([dlsym], [dl dld])
 FUZZ_LIBS=$LIBS
 LIBS=$OLD_LIBS
 AC_SUBST([FUZZ_LIBS])
+
+st_help2man=0
+st_touch=197001010000.00
+AC_MSG_CHECKING([for timestamps of last git commit])
+if test -e "$srcdir"/.git && command -v git > /dev/null; then
+   if tmp=$(git log -1 --format=%cd --date=unix); then
+     st_help2man="$tmp"
+   fi
+   if tmp=$(env TZ=UTC0 git log -1 --format=%cd --date=format-local:%Y%m%d%H%M.%S); then
+      st_touch="$tmp"
+   fi
+fi
+AC_SUBST(SOURCETIME_HELP2MAN, "${SOURCETIME_HELP2MAN:-$st_help2man}")
+AC_MSG_RESULT(help2man $SOURCETIME_HELP2MAN touch $st_touch)
+env TZ=UTC0 \
+    touch -m -t "$st_touch" \
+          "$srcdir"/NEWS.md "$srcdir"/doc/$PACKAGE.texi
 
 AC_CONFIG_FILES([
   Makefile

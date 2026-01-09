@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2026 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -1983,7 +1983,7 @@ int
 asn1_expand_octet_string (asn1_node_const definitions, asn1_node *element,
 			  const char *octetName, const char *objectName)
 {
-  char name[2 * ASN1_MAX_NAME_SIZE + 1], value[ASN1_MAX_NAME_SIZE];
+  char name[2 * ASN1_MAX_NAME_SIZE + 2], value[ASN1_MAX_NAME_SIZE];
   int retCode = ASN1_SUCCESS, result;
   int len, len2, len3;
   asn1_node_const p2;
