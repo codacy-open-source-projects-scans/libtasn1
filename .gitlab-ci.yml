@@ -291,6 +291,10 @@ B-Trisquel12:
   image: kpengboy/trisquel:12.0
   extends: .trisquelubuntu
 
+B-Ubuntu2604:
+  image: ubuntu:26.04
+  extends: .trisquelubuntu
+
 B-Guix:
   image: registry.gitlab.com/debdistutils/guix/container:latest
   stage: build
@@ -317,12 +321,12 @@ B-Guix:
   - !reference [.save-artifacts, script]
 
 # https://docs.gitlab.com/ci/runners/hosted_runners/macos/
-B-macOS14Xcode15:
+B-macOS15Xcode16:
   rules:
   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   stage: build
-  image: macos-14-xcode-15
+  image: macos-15-xcode-16
   tags: [ saas-macos-medium-m1 ]
   variables:
     HOMEBREW_NO_AUTO_UPDATE: 1
@@ -340,12 +344,12 @@ B-macOS14Xcode15:
   - time make V=1 dist
   - !reference [.save-artifacts, script]
 
-B-macOS15Xcode16:
+B-macOS26Xcode26:
   rules:
   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   stage: build
-  image: macos-15-xcode-16
+  image: macos-26-xcode-26
   tags: [ saas-macos-large-m2pro ]
   variables:
     HOMEBREW_NO_AUTO_UPDATE: 1
@@ -365,11 +369,11 @@ B-macOS15Xcode16:
   - time make dist
   - !reference [.save-artifacts, script]
 
-macOS15Xcode16:
+macOS26Xcode26:
   rules:
   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  image: macos-15-xcode-16
+  image: macos-26-xcode-26
   tags: [ saas-macos-medium-m1 ]
   stage: test
   needs: [B-Trisquel11]
@@ -385,7 +389,7 @@ macOS15Xcode16:
 0-compare:
   image: alpine:latest
   stage: repro
-  needs: [ B-AlmaLinux8, B-AlmaLinux9, B-AlmaLinux10, B-RockyLinux8, B-RockyLinux9, B-RockyLinux10, B-Trisquel11, B-Trisquel12, B-Guix, B-Ubuntu2204, B-Ubuntu2404, B-PureOS10, B-Debian11, B-Devuan5, B-Debian12, B-Devuan6, B-Debian13, B-gcc, B-clang, B-Debian10, R-Guix, R-Debian12, R-Ubuntu2404, S-Trisquel10, S-Ubuntu2004 ]
+  needs: [ B-AlmaLinux8, B-AlmaLinux9, B-AlmaLinux10, B-RockyLinux8, B-RockyLinux9, B-RockyLinux10, B-Trisquel11, B-Trisquel12, B-Guix, B-Ubuntu2204, B-Ubuntu2404, B-PureOS10, B-Debian11, B-Devuan5, B-Debian12, B-Devuan6, B-Debian13, B-gcc, B-clang, B-Debian10, R-Guix, R-Debian12, R-Ubuntu2404, S-Trisquel10, S-Ubuntu2004, B-Ubuntu2604 ]
   script:
   - cd out
   - sha256sum */*.tar.* */*/*.tar.* | sort | grep    -- -src.tar.
@@ -404,6 +408,7 @@ macOS15Xcode16:
   - cmp b-almalinux8/src/*.tar.gz b-rockylinux9/src/*.tar.gz
   - cmp b-almalinux8/src/*.tar.gz b-trisquel12/src/*.tar.gz
   - cmp b-almalinux8/src/*.tar.gz b-ubuntu2404/src/*.tar.gz
+  - cmp b-almalinux8/src/*.tar.gz b-ubuntu2604/src/*.tar.gz
   - cmp b-almalinux8/src/*.tar.gz r-guix/src/*.tar.gz
   - cmp b-almalinux8/src/*.tar.gz r-ubuntu2404/src/*v4*.tar.gz
 # Confirm modern git-archive tarball reproducibility - with libz-ng
@@ -999,7 +1004,7 @@ Ubuntu-latest-distcheck:
   needs: [B-Trisquel11]
   before_script:
   - apt-get update -qq
-  - env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq make gcc gtk-doc-tools texinfo
+  - env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq make gcc libc-dev gtk-doc-tools texinfo
   script:
   - tar xfz out/b-trisquel11/*-*.tar.gz
   - cd $(tar tfz out/b-trisquel11/*-*.tar.gz | head -n1)
@@ -1013,7 +1018,7 @@ Ubuntu-rolling-distcheck:
   needs: [B-Trisquel11]
   before_script:
   - apt-get update -qq
-  - env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq make gcc gtk-doc-tools texinfo
+  - env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq make gcc libc-dev gtk-doc-tools texinfo
   script:
   - tar xfz out/b-trisquel11/*-*.tar.gz
   - cd $(tar tfz out/b-trisquel11/*-*.tar.gz | head -n1)
